@@ -47,8 +47,7 @@ library(rnaturalearth)
 
 ```{r}
 #| eval: true
- 
-gapminder_2007 <- gapminder %>%
+gapminder_2007 <- gapminder |>  
   filter(year == 2007)
 ```
 
@@ -75,12 +74,15 @@ gapminder_2007 <- gapminder %>%
 ```{r}
 #| eval: true
 
-gapminder_summary_2007 <- gapminder_2007 |> 
+gapminder_2007 <-  gapminder_summary_2007  |> 
   group_by(continent) |> 
   summarise(
     count = n(),
-    lifeExp = median(lifeExp)
+    lifeExp =median(lifeExp)
   )
+
+
+
 ```
 
 ## Task 4: Summarize data for life expectancy by continent and year
@@ -105,12 +107,10 @@ gapminder_summary_2007 <- gapminder_2007 |>
 
 ```{r}
 #| eval: true
-
 gapminder_summary_continent_year <- gapminder |> 
   group_by(continent, year) |> 
-  summarise(
-    lifeExp = median(lifeExp)
-    ) 
+  summarise(lifeExp = median(lifeExp))
+
 
 ```
 
@@ -147,16 +147,17 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 
 5.  What are the data types of the three variables used for aesthetic mappings?
 
-    *continent: non-numerical, categorical variable, lifeExp = numerical discrete variable, fill= non-numerical, categorical variable*
+    *continent: non-numerical, categorical variable,*
+
+    *lifeExp = numerical discrete variable,*
 
 ```{r}
-ggplot(data = gapminder_2007,
-       mapping = aes(
-         x = continent,
-         y = lifeExp,
-         fill = continent,
-       )) +
-geom_boxplot(outlier.shape = NA)
+ggplot(data = gapminder,
+       mapping = aes(x = continent,
+                     y = lifeExp,
+                     fill = continent)) +
+  geom_boxplot(outlier.shape = NA)
+
 ```
 
 ## Task 7: Create a timeseries plot
@@ -172,15 +173,15 @@ geom_boxplot(outlier.shape = NA)
 3.  Run the code contained in the code chunk and fix any errors.
 
 ```{r}
-ggplot(
-  data = gapminder_summary_continent_year,
-  mapping = aes(
-    x = year,
-    y = lifeExp,
-    color = continent
-  )) +
-    geom_line() +
-    geom_point()
+
+ggplot(data = gapminder_summary_continent_year,
+       mapping = aes(
+         x = year,
+         y = lifeExp,
+         color = continent,
+       )) + 
+  geom_line() +
+  geom_point()
 
 ```
 
@@ -198,13 +199,9 @@ ggplot(
 3.  Run the code contained in the code chunk and fix any errors.
 
 ```{r}
-ggplot(
-  data = gapminder_summary_2007,
-  mapping = aes(
-    x = continent,
-    y = count,
-  )
-) +
+ggplot(data = gapminder_summary_2007,
+       mapping = aes(x = continent,
+                     y = count)) +
   geom_col()
 
 ```
@@ -225,7 +222,7 @@ The plot is identical to the plot created with `geom_col()`. Why? What does the 
 
 -   *`geom_col()` requires two variables `aes(x = , y = ),x` is categorical, `y` is continuous (numeric).*
 
--   *Since in the last exercise `count`was set as the `y` variable in the geom_col() function, it does the exact same function as geom_bar(). That is why the plots are identical.*
+-   *Since in the last exercise in the geom_col() function the `y` variable was set to `count` , geom_col() does the exact same function as geom_bar(). That is why the plots are identical.*
 
     *Source: `(https://argoshare.is.ed.ac.uk/healthyr_book/bar-plots.html)`*
 
@@ -262,21 +259,13 @@ ggplot(
 
 7.  What happens by adding the 'breaks' argument? Play around with the numbers inside of `seq()` to see what changes. Describe here what you observe:
 
--   the seq() function requires
-
 ```{r}
-ggplot(
-  data = gapminder_2007,
-  mapping = aes(
-    x = lifeExp,
-    fill = continent,
+ggplot ( data = gapminder_2007,
+         mapping = (aes(x = lifeExp,
+                        fill = continent))) +
+  geom_histogram(col = "grey30", breaks = seq(40,58,2.5)
   )
-) +
-  geom_histogram(
-    col = "grey30",
-    breaks = seq(40, 100, 3)
-    
-  )
+
 ```
 
 ## Task 10: Scatterplot and faceting
@@ -297,6 +286,13 @@ ggplot(
 6.  Run the code contained in the code chunk and fix any errors.
 
 ```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = gdpPercap,
+                      y = lifeExp,
+                      size = pop,
+                      color = country))+
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~continent)
 
 ```
 
@@ -324,8 +320,9 @@ ggplot(data = gapminder,
                      color = country)) +
   geom_line(lwd = 1, show.legend = FALSE) + 
   facet_wrap(~continent) +
-  # scale_color_manual(values = country_colors) +
+  #scale_color_manual(values = country_colors) +
   theme_minimal() 
+
 
 ```
 
@@ -354,6 +351,7 @@ world |>
   theme(legend.position = "top") +
   labs(fill = "Income Group:") +
   guides(fill = guide_legend(nrow = 2, byrow = TRUE))
+
 
 
 ```
